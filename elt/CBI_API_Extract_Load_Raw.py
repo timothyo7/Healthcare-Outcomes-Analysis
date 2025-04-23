@@ -12,11 +12,11 @@ load_dotenv()
 
 # %%
 # Database connection details from .env
-db_host = os.getenv('DB_HOST')
-db_user = os.getenv('DB_USER')
-db_password = os.getenv('DB_PASSWORD')
-db_schema = 'sql_project'
-db_port = os.getenv('DB_PORT', '5432')
+db_host = os.environ['DB_HOST']
+db_user = os.environ['DB_USER']
+db_password = os.environ['DB_PASSWORD']
+db_schema = 'CBI'
+db_port = '5432'
 
 # %%
 # Print connection parameters (excluding password)
@@ -97,7 +97,7 @@ hospital_data_df.head()
 # %%
 # Save hospital data to database
 try:
-    hospital_data_df.to_sql('cbi_hospital_data', engine, schema='raw', if_exists='replace', index=False)
+    hospital_data_df.to_sql('cbi_hospital_data', engine, schema=db_schema, if_exists='replace', index=False)
     print(f"Saved {len(hospital_data_df)} hospital data records to database")
 except Exception as e:
     print(f"Error saving hospital data to database: {e}")

@@ -1,9 +1,5 @@
 # %%
 # CMS Hospital Readmissions API Extract and Load
-# This notebook extracts hospital readmission data from CMS Data API
-# and loads it to the PostgreSQL database raw schema
-
-# Import required libraries
 import requests
 import pandas as pd
 import json
@@ -14,10 +10,10 @@ from dotenv import load_dotenv
 import time
 
 # %%
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
-# Database connection details from environment variables
+# Database connection details
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
@@ -25,13 +21,11 @@ DB_PORT = os.getenv("DB_PORT", "5432")
 DB_NAME = os.getenv("DB_NAME", "postgres")
 
 # %%
-# Create a PostgreSQL connection string
+# Create PostgreSQL connection
 connection_string = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-
-# Create a SQLAlchemy engine
 engine = create_engine(connection_string)
 
-# Test the connection
+# Test connection
 try:
     with engine.connect() as conn:
         result = conn.execute(text("SELECT 1"))
@@ -40,7 +34,7 @@ except Exception as e:
     print(f"Error connecting to database: {e}")
 
 # %%
-# Create raw schema if it doesn't exist
+# Create raw schema if needed
 try:
     with engine.connect() as conn:
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS raw"))
@@ -49,21 +43,18 @@ except Exception as e:
     print(f"Error creating raw schema: {e}")
 
 # %%
-# CMS Hospital Readmissions Data API Configuration
-# Using the CMS Hospital Readmissions Reduction Program API
-
-# Base URL for CMS Data API - Hospital Readmissions Reduction Program dataset
-CMS_API_BASE_URL = "https://data.cms.gov/provider-data/api/1/datastore/query/9n3s-kdb3"
+# CMS API configuration
+# Hospital Readmissions Reduction Program dataset
+CMS_API_BASE_URL = "https://data.cms.gov/provider-data/api/1/datastore/query/9n3s-kdb3/0"
 
 # %%
-# Function to extract data from CMS API with pagination
+# Function to extract data with pagination
 def extract_cms_readmission_data():
     all_data = []
     offset = 0
-    limit = 500  # Number of records per request
+    limit = 500  # Records per request
     total_records = None
     
-    # Loop to handle pagination
     while True:
         try:
             # Set parameters for pagination
@@ -72,11 +63,9 @@ def extract_cms_readmission_data():
                 "limit": limit
             }
             
-            # Make API request
             print(f"Fetching records from offset {offset}...")
             response = requests.get(CMS_API_BASE_URL, params=params)
             
-            # Check if request was successful
             if response.status_code == 200:
                 data = response.json()
                 
@@ -95,18 +84,17 @@ def extract_cms_readmission_data():
                     offset += limit
                     
                     # Check if we've fetched all records
-                    if len(all_data) >= total_records:
+                    if total_records and len(all_data) >= total_records:
                         print("All records fetched!")
                         break
                         
-                    # Add a pause to avoid hitting API rate limits
+                    # Add a pause to avoid rate limits
                     time.sleep(0.5)
                 else:
                     print("No more results found.")
                     break
             else:
-                print(f"Error fetching data: {response.status_code}")
-                print(response.text)
+                print(f"Error {response.status_code}: {response.text}")
                 break
                 
         except Exception as e:
@@ -126,22 +114,19 @@ def extract_cms_readmission_data():
 cms_readmission_data = extract_cms_readmission_data()
 
 # %%
-# Display the first few rows of data
+# Display the first few rows and data info
 print(f"Fetched {len(cms_readmission_data)} rows of data")
 if not cms_readmission_data.empty:
     print(f"Columns: {cms_readmission_data.columns.tolist()}")
-    cms_readmission_data.head()
+    display(cms_readmission_data.head())
+    
+    # Data types and missing values
+    print("\nData types and info:")
+    display(cms_readmission_data.info())
+    print("\nMissing values per column:")
+    display(cms_readmission_data.isnull().sum())
 else:
     print("No data fetched. Please check the API connection.")
-
-# %%
-# Examine data types and check for missing values
-if not cms_readmission_data.empty:
-    cms_readmission_data.info()
-    print("\nMissing values per column:")
-    print(cms_readmission_data.isnull().sum())
-else:
-    print("No data to analyze.")
 
 # %%
 # Load data to PostgreSQL raw schema
@@ -158,14 +143,14 @@ def load_to_postgres_raw(df, table_name, schema="raw"):
             name=table_name,
             schema=schema,
             con=engine,
-            if_exists='replace',  # Replace if table already exists
+            if_exists='replace',  # Replace if table exists
             index=False,
             method='multi',
-            chunksize=1000  # Load in chunks to avoid memory issues
+            chunksize=1000  # Load in chunks
         )
         print(f"Data successfully loaded to {full_table_name}")
         
-        # Count rows in the table to confirm
+        # Count rows to confirm
         with engine.connect() as conn:
             result = conn.execute(text(f"SELECT COUNT(*) FROM {full_table_name}"))
             count = result.scalar()
@@ -179,7 +164,7 @@ def load_to_postgres_raw(df, table_name, schema="raw"):
 if not cms_readmission_data.empty:
     load_to_postgres_raw(cms_readmission_data, "cms_hospital_readmissions")
 
-    # Create a metadata table to track data extractions
+    # Create a metadata table for tracking
     extraction_metadata = pd.DataFrame([{
         'source': 'CMS Hospital Readmissions Reduction Program API',
         'dataset': 'cms_hospital_readmissions',
@@ -188,7 +173,7 @@ if not cms_readmission_data.empty:
         'extraction_status': 'success'
     }])
 
-    # Load metadata to raw.extraction_metadata table
+    # Load metadata to tracking table
     load_to_postgres_raw(extraction_metadata, "extraction_metadata")
 else:
     print("No data to load to database.")

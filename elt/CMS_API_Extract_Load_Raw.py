@@ -197,30 +197,3 @@ else:
 # Close database connection
 engine.dispose()
 print("Database connection closed.")
-
-# %%
-# If API data extraction fails, you can try using the alternative Healthcare.gov API
-# or download a CSV file directly from data.cms.gov and load it manually
-
-def extract_healthcaregov_api_data():
-    # Using Healthcare.gov API as a fallback
-    API_URL = "https://www.healthcare.gov/api/index.json"
-    
-    try:
-        response = requests.get(API_URL)
-        if response.status_code == 200:
-            data = response.json()
-            # Process the data into a useful format
-            # This is just an example - you'd need to adapt for your needs
-            return pd.DataFrame(data.get('blog', []))
-        else:
-            print(f"Error fetching Healthcare.gov API: {response.status_code}")
-            return pd.DataFrame()
-    except Exception as e:
-        print(f"Error accessing Healthcare.gov API: {e}")
-        return pd.DataFrame()
-
-# Only run this if the CMS API fails
-# healthcaregov_data = extract_healthcaregov_api_data()
-# if not healthcaregov_data.empty:
-#     load_to_postgres_raw(healthcaregov_data, "healthcare_gov_data")

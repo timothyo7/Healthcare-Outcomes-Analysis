@@ -4,7 +4,6 @@
 
 import requests
 import pandas as pd
-import json
 import os
 from datetime import datetime
 from sqlalchemy import create_engine, text

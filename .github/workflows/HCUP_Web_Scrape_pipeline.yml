@@ -1,0 +1,36 @@
+name: HCUP Web Scrape Extract and Load Pipeline
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+  # Scheduled trigger (every Monday at 02:00)
+  schedule:
+    - cron: '0 2 * * 1'
+
+jobs:
+  extract_load:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run HCUP Web Scrape Extract and Load Script
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_PORT: ${{ secrets.DB_PORT }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+      run: |
+        python notebooks/HCUP_Web_Scrape_Extract_Load_Raw.py

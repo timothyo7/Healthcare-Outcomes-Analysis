@@ -63,7 +63,7 @@ plt.figure(figsize=(14, 8))
 
 # Create a horizontal bar plot for better readability with state names
 plt.subplot(1, 2, 1)
-top_states = state_readmission_ratios.head(10).sort_values('avg_excess_ratio')
+top_states = state_readmission_ratios.head(10).sort_values('avg_excess_ratio', ascending=False)
 sns.barplot(y='state', x='avg_excess_ratio', data=top_states)
 plt.title('Top 10 States by Excess Readmission Ratio')
 plt.xlabel('Average Excess Ratio')

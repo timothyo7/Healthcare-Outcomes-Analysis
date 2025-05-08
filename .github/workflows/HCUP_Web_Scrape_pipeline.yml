@@ -3,7 +3,7 @@ name: HCUP Web Scrape Extract and Load Pipeline
 on:
   # Manual trigger
   workflow_dispatch:
-  # Scheduled trigger (every Monday at 02:00)
+  # Scheduled trigger (every Monday at 00:00)
   schedule:
     - cron: '0 0 * * 1'
 

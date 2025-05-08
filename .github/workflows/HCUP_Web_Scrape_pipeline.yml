@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   # Scheduled trigger (every Monday at 02:00)
   schedule:
-    - cron: '0 2 * * 1'
+    - cron: '0 0 * * 1'
 
 jobs:
   extract_load:

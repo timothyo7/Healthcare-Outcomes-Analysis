@@ -55,7 +55,7 @@ state_readmission_ratios = pd.read_sql(sql_query_1, engine)
 
 # Display the results
 print(f"Analysis of {len(state_readmission_ratios)} states' readmission ratios")
-state_readmission_ratios.head(10)
+state_readmission_ratios.head(15)
 
 # %%
 # Visualize top 10 and bottom 10 states by average excess ratio
@@ -145,20 +145,6 @@ measure_comparison
 # %%
 # Visualize the comparison of predicted vs expected rates by measure
 plt.figure(figsize=(12, 10))
-
-# Create a bar plot for predicted vs expected rates
-plt.subplot(2, 1, 1)
-measure_names = measure_comparison['measure_name']
-x = range(len(measure_names))
-width = 0.35
-
-plt.bar(x, measure_comparison['avg_predicted_rate'], width, label='Predicted Rate')
-plt.bar([i + width for i in x], measure_comparison['avg_expected_rate'], width, label='Expected Rate')
-
-plt.ylabel('Readmission Rate (%)')
-plt.title('Predicted vs. Expected Readmission Rates by Measure')
-plt.xticks([i + width/2 for i in x], measure_names, rotation=45, ha='right')
-plt.legend()
 
 # Create a plot for the rate differences
 plt.subplot(2, 1, 2)

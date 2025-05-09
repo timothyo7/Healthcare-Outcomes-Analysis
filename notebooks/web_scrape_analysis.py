@@ -1,5 +1,5 @@
 # %%
-# Hospital Infections Analysis - Complementing Readmissions Data
+# Hospital Infections Analysis
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -83,11 +83,11 @@ plt.show()
 
 # %% [markdown]
 # ### Insight:
-# County and municipality-owned hospitals have higher average infection rates compared to not-for-profit and state hospitals. This pattern could indicate that publicly-owned facilities might face resource constraints or serve higher-risk populations, potentially leading to both higher infection rates and higher readmission rates.
+# The data reveals consistent differences in infection rates across hospital ownership types, with County-owned facilities showing the lowest average rate (1.53) while Municipality-owned facilities have the highest (1.94). Despite having the largest sample size (144 facilities), Not for Profit Corporations maintain a moderate infection rate (1.77), though they show significant variation in performance as seen in earlier data on top-performing hospitals. Notably, County facilities show the lowest average observed infections (0.88) but the highest standard deviation (7.52), suggesting inconsistent performance across this small group.
 
 # %% [markdown]
 # ### Recommendation:
-# Target infection prevention programs at county and municipality-owned hospitals, as these facilities may benefit most from additional resources and best-practice sharing. CMS should consider adjusting readmission penalties to account for ownership type, as the same factors that drive infection rates (patient demographics, resource constraints) likely also impact readmission rates.
+# Develop targeted infection control protocols based on ownership type, prioritizing knowledge transfer from high-performing County facilities to Municipality-owned hospitals with systematically higher rates. Investigate the relationship between infection rates and readmission patterns across ownership categories to identify whether improvements in infection control translate to reduced readmissions, particularly within the Not for Profit sector where the large sample size (144 facilities) provides robust data for establishing best practices.
 
 # %% [markdown]
 # ## Business Question 2: Which hospitals have shown significant improvements in infection rates over time, and could their strategies help reduce readmissions?
@@ -184,11 +184,11 @@ plt.show()
 
 # %% [markdown]
 # ### Insight:
-# Several hospitals demonstrated significant infection rate improvement over the 2020-2022 period, with some facilities reducing rates by more than 1.5 points. These hospitals represent a mix of ownership types and counties, suggesting that improvement strategies can work across different hospital characteristics. The most successful hospitals typically showed consistent year-over-year improvements rather than a single large drop.
+# The data reveals significant infection rate reductions among several hospitals between 2020-2022, with Massena Hospital achieving the most dramatic improvement (29.44 points, from 31.24 to 1.79). The most substantial reductions occurred between 2020-2021, with most facilities maintaining their improvements through 2022. These top-performing hospitals, all not-for-profit organizations, demonstrate that significant infection control improvements are achievable in a relatively short timeframe.
 
 # %% [markdown]
 # ### Recommendation:
-# Conduct case studies of the most-improved hospitals to identify their infection prevention strategies and determine if these methods could help reduce readmissions. Many of the factors that contribute to infection rate improvements (better care transitions, enhanced discharge planning, improved follow-up) are also likely to reduce readmission rates. CMS could create a learning collaborative connecting high-performing hospitals with those struggling with both infections and readmissions.
+# Implement a structured knowledge transfer program to study infection control protocols from Massena Hospital and Montefiore Mount Vernon Hospital, which achieved 94% and 73% reductions respectively. Analyze whether these infection control improvements correlate with corresponding reductions in readmission rates, particularly for infection-related conditions, to develop targeted intervention strategies that address both metrics simultaneously.
 
 # %%
 # Close database connection
